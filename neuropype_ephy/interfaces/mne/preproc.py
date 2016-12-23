@@ -10,6 +10,7 @@ from neuropype_ephy.preproc import compute_ica,\
 
 class CompIcaInputSpec(BaseInterfaceInputSpec):
     """Input specification for CompIca"""
+
     fif_file = traits.File(exists=True,
                            desc='raw meg data in fif format',
                            mandatory=True)
@@ -20,6 +21,7 @@ class CompIcaInputSpec(BaseInterfaceInputSpec):
 
 class CompIcaOutputSpec(TraitedSpec):
     """Output specification for CompIca"""
+
     ica_file = traits.File(exists=True,
                            desc='file with ica solution in .fif',
                            mandatory=True)
@@ -34,6 +36,7 @@ class CompIcaOutputSpec(TraitedSpec):
 
 class CompIca(BaseInterface):
     """Compute ICA solution on raw fif data"""
+
     input_spec = CompIcaInputSpec
     output_spec = CompIcaOutputSpec
 
@@ -63,6 +66,7 @@ class CompIca(BaseInterface):
 
 class PreprocFifInputSpec(BaseInterfaceInputSpec):
     """Input specification for PreprocFif"""
+
     fif_file = traits.File(exists=True,
                            desc='raw meg data in fif format',
                            mandatory=True)
@@ -73,6 +77,7 @@ class PreprocFifInputSpec(BaseInterfaceInputSpec):
 
 class PreprocFifOutputSpec(TraitedSpec):
     """Output specification for PreprocFif"""
+
     fif_file = traits.File(exists=True,
                            desc='.fif file',
                            mandatory=True)
@@ -80,6 +85,7 @@ class PreprocFifOutputSpec(TraitedSpec):
 
 class PreprocFif(BaseInterface):
     """Interface for preproc.preprocess_fif"""
+
     input_spec = PreprocFifInputSpec
     output_spec = PreprocFifOutputSpec
 
@@ -100,9 +106,9 @@ class PreprocFif(BaseInterface):
         return outputs
 
 
-
 class CreateEpInputSpec(BaseInterfaceInputSpec):
     """Input specification for CreateEp"""
+
     fif_file = traits.File(exists=True,
                            desc='raw meg data in fif format',
                            mandatory=True)
@@ -111,13 +117,15 @@ class CreateEpInputSpec(BaseInterfaceInputSpec):
 
 class CreateEpOutputSpec(TraitedSpec):
     """Output specification for CreateEp"""
-    fif_file = traits.File(exists=True,
-                           desc='-epo.fif file',
-                           mandatory=True)
+
+    epo_fif_file = traits.File(exists=True,
+                               desc='-epo.fif file',
+                               mandatory=True)
 
 
 class CreateEp(BaseInterface):
     """Interface for preproc.create_epochs"""
+
     input_spec = CreateEpInputSpec
     output_spec = CreateEpOutputSpec
 
@@ -127,10 +135,10 @@ class CreateEp(BaseInterface):
 
         result_fif = create_epochs(fif_file, ep_length)
 
-        self.fif_file = result_fif
+        self.epo_fif_file = result_fif
         return runtime
 
     def _list_outputs(self):
         outputs = self._outputs().get()
-        outputs['fif_file'] = self.fif_file
+        outputs['epo_fif_file'] = self.epo_fif_file
         return outputs
