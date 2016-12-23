@@ -52,7 +52,7 @@ class CompIca(BaseInterface):
 
         
         ica_output = compute_ica(fif_file, ecg_ch_name,
-                                   eog_ch_name, n_components)
+                                 eog_ch_name, n_components)
         self.ica_file = ica_output[0]
         self.ica_sol_file = ica_output[1]
         self.ica_ts_file = ica_output[2]
