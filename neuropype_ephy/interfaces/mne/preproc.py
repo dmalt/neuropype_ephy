@@ -50,7 +50,6 @@ class CompIca(BaseInterface):
         eog_ch_name = self.inputs.eog_ch_name
         n_components = self.inputs.n_components
 
-        
         ica_output = compute_ica(fif_file, ecg_ch_name,
                                  eog_ch_name, n_components)
         self.ica_file = ica_output[0]
