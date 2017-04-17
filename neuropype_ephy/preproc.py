@@ -18,11 +18,11 @@ def preprocess_fif(fif_file, l_freq=None, h_freq=None, down_sfreq=None):
     select_sensors = pick_types(raw.info, meg=True, ref_meg=False, eeg=False)
 
     if l_freq or h_freq:
-        raw.filter(l_freq=l_freq, h_freq=h_freq, picks=select_sensors)
+        raw.filter(l_freq=l_freq, h_freq=h_freq, l_trans_bandwidth='auto')
         filt_str = '_filt'
 
     if down_sfreq:
-        raw.resample(sfreq=down_sfreq, npad=0, stim_picks=select_sensors)
+        raw.resample(sfreq=down_sfreq, npad='auto')
         down_str = '_dsamp'
 
     savename = os.path.abspath(basename + filt_str + down_str + ext)
@@ -41,7 +41,6 @@ def compute_ica(fif_file, ecg_ch_name, eog_ch_name, n_components):
     from mne.preprocessing import create_ecg_epochs, create_eog_epochs
 
     from nipype.utils.filemanip import split_filename as split_f
-
 
     subj_path, basename, ext = split_f(fif_file)
 
@@ -123,6 +122,7 @@ def compute_ica(fif_file, ecg_ch_name, eog_ch_name, n_components):
 
 
 def get_raw_info(raw_fname):
+    """Get info structure from raw meg data"""
     from mne.io import Raw
 
     raw = Raw(raw_fname, preload=True)
@@ -137,13 +137,15 @@ def get_raw_sfreq(raw_fname):
 
 
 def create_reject_dict(raw_info):
+    """Create rejection dictionary for meg data"""
+
     from mne import pick_types
 
     picks_eog = pick_types(raw_info, meg=False, ref_meg=False, eog=True)
     picks_mag = pick_types(raw_info, meg='mag', ref_meg=False)
     picks_grad = pick_types(raw_info, meg='grad', ref_meg=False)
 
-    reject=dict()
+    reject = dict()
     if picks_mag.size != 0:
         reject['mag'] = 4e-12
     if picks_grad.size != 0:
@@ -155,6 +157,7 @@ def create_reject_dict(raw_info):
 
 
 def create_ts(raw_fname):
+    """Create numpy timeseries from raw meg data"""
 
     import os
     import numpy as np
@@ -277,6 +280,7 @@ def generate_report(raw, ica, subj_name, basename,
         report.add_figs_to_section(fig, captions=['Time-locked EOG sources'],
                                    section='ICA - EOG')
     # ----------------- end generate report for EoG ---------- #
+
     ic_nums = range(ica.n_components_)
     fig = ica.plot_components(picks=ic_nums, show=False)
     report.add_figs_to_section(fig, captions=['All IC topographies'],
@@ -320,7 +324,9 @@ def create_events(raw, epoch_length):
 
 def create_epochs(fif_file, ep_length):
     """Split raw .fif file into epochs of
-    length ep_length with rejection criteria"""
+    length ep_length with rejection criteria
+
+    """
 
     import os
     from mne.io import Raw
