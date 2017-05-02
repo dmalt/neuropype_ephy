@@ -18,6 +18,7 @@ def convert_ds_to_raw_fif(ds_file):
     result in pipeline folder structure
 
     """
+
     import os
     import os.path as op
 
@@ -39,7 +40,7 @@ def convert_ds_to_raw_fif(ds_file):
         raw.save(raw_fif_file)
     else:
         print('*** RAW FIF file %s exists!!!' % raw_fif_file)
-        
+
     return raw_fif_file
 
 
@@ -67,77 +68,77 @@ def convert_ds_to_raw_fif(ds_file):
 def compute_ROI_coordinates():
 
     import params_victor as parv
-    
-        
+
+
     label_vertices_victor_file = os.path.join(parv.data_path,"label_vertices_victor.txt")
-    
+
     coord_vertices_victor_file = os.path.join(parv.data_path,"coord_vertices_victor.txt")
-    
+
     coord_vertices_victor =  np.array(np.loadtxt(coord_vertices_victor_file, dtype = 'float'))
-    
+
     print(coord_vertices_victor)
-    
+
     ROI_names = []
-    
+
     ROI_mean_coords = []
-    
+
     with open(label_vertices_victor_file,'r') as f:
-        
+
         lines = f.readlines()
-        
+
         print lines
-                
+
         for i,line in enumerate(lines[1:]):
-            
+
             print line
-            
+
             split_line = line.strip().split(':')
-            
+
             if len(split_line) == 2:
-                
+
                 label = split_line[0]
-                
+
                 correct_label =  "_".join(label.split(" "))
-                
+
                 ROI_names.append(correct_label)
-                
-                
+
+
                 print split_line[1].strip().split(' ')
-                
+
                 vertex_indexes = np.array(map(int,split_line[1].strip().split(' ')))
-                
+
                 print vertex_indexes
-                
-                np_vertex_indexes = vertex_indexes -1 
-                
+
+                np_vertex_indexes = vertex_indexes -1
+
                 print np_vertex_indexes
-                
+
                 print coord_vertices_victor[np_vertex_indexes]
-                
+
                 mean_coord = np.mean(coord_vertices_victor[np_vertex_indexes,:],axis = 0)
-                
+
                 print mean_coord
-                
+
                 ROI_mean_coords.append(mean_coord)
                 #np_vertice_indexes
-            
+
         print ROI_names
-        
+
         print len(ROI_names)
-        
-        
+
+
         np_ROI_mean_coords = np.array(ROI_mean_coords)
-        
+
         print np_ROI_mean_coords
-        
+
         print np_ROI_mean_coords.shape
-        
+
         np.savetxt(parv.MEG_ROI_coords_file,np_ROI_mean_coords, fmt = "%f")
-        
+
         np.savetxt(parv.MEG_ROI_names_file,np.array(ROI_names,dtype = str), fmt = "%s")
 
-        
-# --------------------- testing 
+
+# --------------------- testing
 def test_convert_data():
 	
 	subj_path = os.path.join(main_path ,'balai')
@@ -209,4 +210,4 @@ if __name__ == '__main__':
 	#test_import_data()
 
         compute_ROI_coordinates()
-        
+
